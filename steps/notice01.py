@@ -4,15 +4,20 @@ import numpy as np
 class Variable:
     def __init__(self, data):
         self.data = data
+        self.grad = None
 
 
 class Function:
     def __call__(self, input):
         x = input.data
         y = self.forward(x)
+        self.input = input
         return Variable(y)
 
     def forward(self, x):
+        raise NotImplementedError()
+
+    def backward(self, gy):
         raise NotImplementedError()
 
 
@@ -20,10 +25,18 @@ class Square(Function):
     def forward(self, x):
         return x ** 2
 
+    def backward(self, gy):
+        x = self.input.data
+        return 2 * x * gy
+
 
 class Exp(Function):
     def forward(self, x):
         return np.exp(x)
+
+    def backward(self, gy):
+        x = self.input.data
+        return np.exp(x) * gy
 
 
 def numerical_diff(f, x, eps=1e-4):
@@ -34,17 +47,18 @@ def numerical_diff(f, x, eps=1e-4):
     return (y1.data - y0.data) / (2 * eps)
 
 
-f = Square()
-x = Variable(np.array(2.0))
-dy = numerical_diff(f, x)
-print(dy)
-
-
-def f(x):
-    A = Square()
-    B = Exp()
-    return A(B(A(x)))
+A = Square()
+B = Exp()
+C = Square()
 
 x = Variable(np.array(0.5))
-dy = numerical_diff(f, x)
-print(dy)
+a = A(x)
+b = B(a)
+y = C(b)
+
+y.grad = np.array(1.0)
+b.grad = C.backward(y.grad)
+a.grad = B.backward(b.grad)
+x.grad = A.backward(a.grad)
+print(x.grad)
+
