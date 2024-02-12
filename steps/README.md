@@ -18,3 +18,5 @@ y = (e^{x^2})^2
 ### step 07
 역전파 자동화
 linked list 구조 이용
+
+### step 09
