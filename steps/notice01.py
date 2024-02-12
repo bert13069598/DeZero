@@ -5,14 +5,21 @@ class Variable:
     def __init__(self, data):
         self.data = data
         self.grad = None
+        self.creator = None
+
+    def set_creator(self, func):
+        self.creator = func
 
 
 class Function:
     def __call__(self, input):
         x = input.data
         y = self.forward(x)
+        output = Variable(y)
+        output.set_creator(self)
         self.input = input
-        return Variable(y)
+        self.output = output
+        return output
 
     def forward(self, x):
         raise NotImplementedError()
@@ -57,8 +64,16 @@ b = B(a)
 y = C(b)
 
 y.grad = np.array(1.0)
+
+C = y.creator
+b = C.input
 b.grad = C.backward(y.grad)
+
+B = b.creator
+a = B.input
 a.grad = B.backward(b.grad)
+
+A = a.creator
+x = A.input
 x.grad = A.backward(a.grad)
 print(x.grad)
-
