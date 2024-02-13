@@ -1,7 +1,6 @@
 ```bash
-python notice01.py
+python main.py
 ```
-
 
 ### step 03
 합성 함수  
@@ -20,3 +19,9 @@ y = (e^{x^2})^2
 linked list 구조 이용
 
 ### step 09
+
+
+### step 11
+인수와 반환값을 리스트로 변경
+가변 길이 인수 사용
+

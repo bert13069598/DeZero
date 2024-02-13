@@ -25,16 +25,19 @@ class Variable:
 
 
 class Function:
-    def __call__(self, input):
-        x = input.data
-        y = self.forward(x)
-        output = Variable(np.array(y) if np.isscalar(y) else y)
-        output.set_creator(self)
-        self.input = input
-        self.output = output
-        return output
+    def __call__(self, *inputs):
+        xs = [x.data for x in inputs]
+        ys = self.forward(*xs)
+        if not isinstance(ys, tuple):
+            ys = (ys,)
+        outputs = [Variable(np.array(y)) if np.isscalar(y) else y for y in ys]
+        for output in outputs:
+            output.set_creator(self)
+        self.inputs = inputs
+        self.outputs = outputs
+        return outputs if len(outputs) > 1 else outputs[0]
 
-    def forward(self, x):
+    def forward(self, *x):
         raise NotImplementedError()
 
     def backward(self, gy):
@@ -59,6 +62,12 @@ class Exp(Function):
         return np.exp(x) * gy
 
 
+class Add(Function):
+    def forward(self, x0, x1):
+        y = x0 + x1
+        return y
+
+
 def numerical_diff(f, x, eps=1e-4):
     x0 = Variable(x.data - eps)
     x1 = Variable(x.data + eps)
@@ -75,8 +84,11 @@ def exp(x):
     return Exp()(x)
 
 
-x = Variable(np.array(0.5))
-y = square(exp(square(x)))
+def add(x0, x1):
+    return Add()(x0, x1)
 
-y.backward()
-print(x.grad)
+
+x0 = Variable(np.array(2))
+x1 = Variable(np.array(3))
+y = add(x0, x1)
+print(y.data)
