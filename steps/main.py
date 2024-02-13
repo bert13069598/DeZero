@@ -53,6 +53,30 @@ class Variable:
     def cleargrad(self):
         self.grad = None
 
+    @property
+    def shape(self):
+        return self.data.shape
+
+    @property
+    def ndim(self):
+        return self.data.ndim
+
+    @property
+    def size(self):
+        return self.data.size
+
+    @property
+    def dtype(self):
+        return self.data.dtype
+
+    def __len__(self):
+        return len(self.data)
+
+    def __repr__(self):
+        if self.data is None:
+            return 'variable(None)'
+        p = str(self.data).replace('\n', '\n' + ' ' * 9)
+        return 'variable('+p+')'
 
 class Config:
     enable_backprop = True
@@ -142,6 +166,10 @@ def add(x0, x1):
     return Add()(x0, x1)
 
 
-with no_grad():
-    x = Variable(np.array(2))
-    y = square(x)
+x = Variable(np.array([[1, 2, 3], [4, 5, 6]]))
+print(x.shape)
+print(x.ndim)
+print(x.size)
+print(x.dtype)
+print(len(x))
+print(x)
