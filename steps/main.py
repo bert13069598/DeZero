@@ -26,7 +26,10 @@ class Variable:
                 gxs = (gxs,)
 
             for x, gx in zip(f.inputs, gxs):
-                x.grad = gx
+                if x.grad is None:
+                    x.grad = gx
+                else:
+                    x.grad = x.grad + gx
                 if x.creator is not None:
                     funcs.append(x.creator)
 
@@ -98,11 +101,9 @@ def add(x0, x1):
     return Add()(x0, x1)
 
 
-x = Variable(np.array(2))
-y = Variable(np.array(3))
+x = Variable(np.array(3))
 
-z = add(square(x), square(y))
-z.backward()
-print(z.data)
+y = add(add(x, x), x)
+y.backward()
+print(y.data)
 print(x.grad)
-print(y.grad)
