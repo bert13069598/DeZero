@@ -20,11 +20,15 @@ class Variable:
         funcs = [self.creator]
         while funcs:
             f = funcs.pop()
-            x, y = f.input, f.output
-            x.grad = f.backward(y.grad)
+            gys = [output.grad for output in f.outputs]
+            gxs = f.backward(*gys)
+            if not isinstance(gxs, tuple):
+                gxs = (gxs,)
 
-            if x.creator is not None:
-                funcs.append(x.creator)
+            for x, gx in zip(f.inputs, gxs):
+                x.grad = gx
+                if x.creator is not None:
+                    funcs.append(x.creator)
 
 
 class Function:
@@ -52,7 +56,7 @@ class Square(Function):
         return x ** 2
 
     def backward(self, gy):
-        x = self.input.data
+        x = self.inputs[0].data
         return 2 * x * gy
 
 
@@ -69,6 +73,9 @@ class Add(Function):
     def forward(self, x0, x1):
         y = x0 + x1
         return y
+
+    def backward(self, gy):
+        return gy, gy
 
 
 def numerical_diff(f, x, eps=1e-4):
@@ -91,7 +98,11 @@ def add(x0, x1):
     return Add()(x0, x1)
 
 
-x0 = Variable(np.array(2))
-x1 = Variable(np.array(3))
-y = add(x0, x1)
-print(y.data)
+x = Variable(np.array(2))
+y = Variable(np.array(3))
+
+z = add(square(x), square(y))
+z.backward()
+print(z.data)
+print(x.grad)
+print(y.grad)
