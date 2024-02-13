@@ -17,7 +17,7 @@ class Variable:
         self.creator = func
         self.generation = func.generation + 1
 
-    def backward(self):
+    def backward(self, retain_grad=False):
         if self.grad is None:
             self.grad = np.ones_like(self.data)
 
@@ -45,6 +45,9 @@ class Variable:
                     x.grad = x.grad + gx
                 if x.creator is not None:
                     add_func(x.creator)
+            if not retain_grad:
+                for y in f.outputs:
+                    y().grad = None
 
     def cleargrad(self):
         self.grad = None
@@ -119,11 +122,13 @@ def add(x0, x1):
     return Add()(x0, x1)
 
 
-x = Variable(np.array(2))
-a = square(x)
-y = add(square(a), square(a))
+x0 = Variable(np.array(1))
+x1 = Variable(np.array(1))
+t = add(x0, x1)
+y = add(x0, t)
 y.backward()
 
-print(y.data)
-print(x.grad)
+print(y.grad, t.grad)
+print(x0.grad, x1.grad)
+
 
