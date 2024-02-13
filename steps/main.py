@@ -33,6 +33,9 @@ class Variable:
                 if x.creator is not None:
                     funcs.append(x.creator)
 
+    def cleargrad(self):
+        self.grad = None
+
 
 class Function:
     def __call__(self, *inputs):
@@ -103,6 +106,12 @@ def add(x0, x1):
 
 x = Variable(np.array(3))
 
+y = add(x, x)
+y.backward()
+print(y.data)
+print(x.grad)
+
+x.cleargrad()
 y = add(add(x, x), x)
 y.backward()
 print(y.data)
