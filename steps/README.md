@@ -73,3 +73,4 @@ graph LR;
 
 ### step 18
 `retain_grad`로 말단 변수 외에는 미분값 유지하지 않음
+`enable_backprop`로 예측 시 순전파 연산만 사용

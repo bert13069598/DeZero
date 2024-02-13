@@ -53,6 +53,10 @@ class Variable:
         self.grad = None
 
 
+class Config:
+    enable_backprop = True
+
+
 class Function:
     def __call__(self, *inputs):
         xs = [x.data for x in inputs]
@@ -61,11 +65,12 @@ class Function:
             ys = (ys,)
         outputs = [Variable(np.array(y)) if np.isscalar(y) else y for y in ys]
 
-        self.generation = max([x.generation for x in inputs])
-        for output in outputs:
-            output.set_creator(self)
-        self.inputs = inputs
-        self.outputs = [weakref.ref(output) for output in outputs]
+        if Config.enable_backprop:
+            self.generation = max([x.generation for x in inputs])
+            for output in outputs:
+                output.set_creator(self)
+            self.inputs = inputs
+            self.outputs = [weakref.ref(output) for output in outputs]
         return outputs if len(outputs) > 1 else outputs[0]
 
     def forward(self, *x):
@@ -122,13 +127,11 @@ def add(x0, x1):
     return Add()(x0, x1)
 
 
-x0 = Variable(np.array(1))
-x1 = Variable(np.array(1))
-t = add(x0, x1)
-y = add(x0, t)
+Config.enable_backprop = True
+x = Variable(np.ones((100, 100, 100)))
+y = square(square(square(x)))
 y.backward()
 
-print(y.grad, t.grad)
-print(x0.grad, x1.grad)
-
-
+Config.enable_backprop = False
+x = Variable(np.ones((100, 100, 100)))
+y = square(square(square(x)))
