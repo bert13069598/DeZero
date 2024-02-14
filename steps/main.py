@@ -99,6 +99,8 @@ def no_grad():
 
 class Function:
     def __call__(self, *inputs):
+        inputs = [x if isinstance(x, Variable) else Variable(x) for x in inputs]
+
         xs = [x.data for x in inputs]
         ys = self.forward(*xs)
         if not isinstance(ys, tuple):
@@ -174,6 +176,7 @@ def exp(x):
 
 
 def add(x0, x1):
+    x1 = np.array(x1) if np.isscalar(x1) else x1
     return Add()(x0, x1)
 
 
@@ -182,16 +185,14 @@ def mul(x0, x1):
 
 
 Variable.__mul__ = mul
+Variable.__rmul__ = mul
 Variable.__add__ = add
+Variable.__radd__ = add
 
-a = Variable(np.array(3))
-b = Variable(np.array(2))
-c = Variable(np.array(1))
-
-y = a*b+c
-y.backward()
-
+x = Variable(np.array(2))
+y = x + 3.0
 print(y)
-print(a.grad)
-print(b.grad)
-print(c.grad)
+y = 3.0 + x
+print(y)
+z = np.array(3.0) + x
+print(z)
