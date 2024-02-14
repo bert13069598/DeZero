@@ -82,3 +82,4 @@ graph LR;
 ### step 20
 Mul 클래스  
 float, int와 함께 사용
+Neg, Sub, Div, Pow 클래스
