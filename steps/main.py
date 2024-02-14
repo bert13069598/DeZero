@@ -78,9 +78,6 @@ class Variable:
         p = str(self.data).replace('\n', '\n' + ' ' * 9)
         return 'variable(' + p + ')'
 
-    def __mul__(self, other):
-        return mul(self, other)
-
 
 class Config:
     enable_backprop = True
@@ -184,7 +181,17 @@ def mul(x0, x1):
     return Mul()(x0, x1)
 
 
+Variable.__mul__ = mul
+Variable.__add__ = add
+
 a = Variable(np.array(3))
 b = Variable(np.array(2))
-y = a * b
+c = Variable(np.array(1))
+
+y = a*b+c
+y.backward()
+
 print(y)
+print(a.grad)
+print(b.grad)
+print(c.grad)
