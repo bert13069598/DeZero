@@ -76,7 +76,8 @@ class Variable:
         if self.data is None:
             return 'variable(None)'
         p = str(self.data).replace('\n', '\n' + ' ' * 9)
-        return 'variable('+p+')'
+        return 'variable(' + p + ')'
+
 
 class Config:
     enable_backprop = True
@@ -146,6 +147,16 @@ class Add(Function):
         return gy, gy
 
 
+class Mul(Function):
+    def forward(self, x0, x1):
+        y = x0 * x1
+        return y
+
+    def backward(self, gy):
+        x0, x1 = self.inputs[0].data, self.inputs[1].data
+        return gy * x1, gy * x0
+
+
 def numerical_diff(f, x, eps=1e-4):
     x0 = Variable(x.data - eps)
     x1 = Variable(x.data + eps)
@@ -166,10 +177,19 @@ def add(x0, x1):
     return Add()(x0, x1)
 
 
-x = Variable(np.array([[1, 2, 3], [4, 5, 6]]))
-print(x.shape)
-print(x.ndim)
-print(x.size)
-print(x.dtype)
-print(len(x))
-print(x)
+def mul(x0, x1):
+    return Mul()(x0, x1)
+
+
+a = Variable(np.array(3))
+b = Variable(np.array(2))
+c = Variable(np.array(1))
+
+y = add(mul(a, b), c)
+y.backward()
+
+print(y)
+print(a.grad)
+print(b.grad)
+print(c.grad)
+

@@ -78,3 +78,6 @@ graph LR;
 
 ### step 19
 변수 사용성 개선  
+
+### step 20
+Mul 클래스  
