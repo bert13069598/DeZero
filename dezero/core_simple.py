@@ -4,6 +4,10 @@ import numpy as np
 import contextlib
 
 
+class Config:
+    enable_backprop = True
+
+
 class Variable:
     def __init__(self, data):
         if data is not None:
@@ -79,24 +83,6 @@ class Variable:
         return 'variable(' + p + ')'
 
 
-class Config:
-    enable_backprop = True
-
-
-@contextlib.contextmanager
-def using_config(name, value):
-    old_value = getattr(Config, name)
-    setattr(Config, name, value)
-    try:
-        yield
-    finally:
-        setattr(Config, name, old_value)
-
-
-def no_grad():
-    return using_config('enable_backprop', False)
-
-
 class Function:
     def __call__(self, *inputs):
         inputs = [x if isinstance(x, Variable) else Variable(x) for x in inputs]
@@ -120,24 +106,6 @@ class Function:
 
     def backward(self, gy):
         raise NotImplementedError()
-
-
-class Square(Function):
-    def forward(self, x):
-        return x ** 2
-
-    def backward(self, gy):
-        x = self.inputs[0].data
-        return 2 * x * gy
-
-
-class Exp(Function):
-    def forward(self, x):
-        return np.exp(x)
-
-    def backward(self, gy):
-        x = self.input.data
-        return np.exp(x) * gy
 
 
 class Add(Function):
@@ -203,20 +171,18 @@ class Pow(Function):
         return gx
 
 
-def numerical_diff(f, x, eps=1e-4):
-    x0 = Variable(x.data - eps)
-    x1 = Variable(x.data + eps)
-    y0 = f(x0)
-    y1 = f(x1)
-    return (y1.data - y0.data) / (2 * eps)
+@contextlib.contextmanager
+def using_config(name, value):
+    old_value = getattr(Config, name)
+    setattr(Config, name, value)
+    try:
+        yield
+    finally:
+        setattr(Config, name, old_value)
 
 
-def square(x):
-    return Square()(x)
-
-
-def exp(x):
-    return Exp()(x)
+def no_grad():
+    return using_config('enable_backprop', False)
 
 
 def add(x0, x1):
@@ -256,27 +222,14 @@ def pow(x, c):
     return Pow(c)(x)
 
 
-Variable.__mul__ = mul
-Variable.__rmul__ = mul
-Variable.__add__ = add
-Variable.__radd__ = add
-Variable.__neg__ = neg
-Variable.__sub__ = sub
-Variable.__rsub__ = rsub
-Variable.__truediv__ = div
-Variable.__rtruediv__ = rdiv
-Variable.__pow__ = pow
-
-x = Variable(np.array(2))
-y = -x
-print(y)
-y1 = 3.0 - x
-y2 = x - 3.0
-print(y1)
-print(y2)
-y3 = x / 2
-y4 = 6 / x
-print(y3)
-print(y4)
-y = x ** 3
-print(y)
+def setup_variable():
+    Variable.__add__ = add
+    Variable.__radd__ = add
+    Variable.__mul__ = mul
+    Variable.__rmul__ = mul
+    Variable.__neg__ = neg
+    Variable.__sub__ = sub
+    Variable.__rsub__ = rsub
+    Variable.__truediv__ = div
+    Variable.__rtruediv__ = rdiv
+    Variable.__pow__ = pow
