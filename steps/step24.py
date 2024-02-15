@@ -5,6 +5,7 @@ if '__file__' in globals():
 
     sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from dezero import Variable
+from dezero.utils import plot_dot_graph
 
 
 def sphere(x, y):
@@ -30,14 +31,29 @@ z = sphere(x, y)
 z.backward()
 print(x.grad, y.grad)
 
+x.name = 'x'
+y.name = 'y'
+z.name = 'z'
+plot_dot_graph(z, verbose=False, to_file='sphere.png')
+
 x.cleargrad()
 y.cleargrad()
 z = matyas(x, y)
 z.backward()
 print(x.grad, y.grad)
 
+x.name = 'x'
+y.name = 'y'
+z.name = 'z'
+plot_dot_graph(z, verbose=False, to_file='matyas.png')
+
 x.cleargrad()
 y.cleargrad()
 z = goldstein(x, y)
 z.backward()
 print(x.grad, y.grad)
+
+x.name = 'x'
+y.name = 'y'
+z.name = 'z'
+plot_dot_graph(z, verbose=False, to_file='goldstein.png')

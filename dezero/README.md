@@ -1,9 +1,7 @@
 ```bash
 python main.py
 ```
-```bash
-python utils.py
-```
+
 ### step 03
 합성 함수  
 ```math

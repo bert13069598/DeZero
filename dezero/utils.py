@@ -1,12 +1,5 @@
+import os
 import subprocess
-
-import numpy as np
-
-if '__file__' in globals():
-    import os, sys
-
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from dezero import Variable
 
 
 def _dot_var(v, verbose=False):
@@ -20,12 +13,6 @@ def _dot_var(v, verbose=False):
     return dot_var.format(id(v), name)
 
 
-x = Variable(np.random.randn(2, 3))
-x.name = 'x'
-print(_dot_var(x))
-print(_dot_var(x, verbose=True))
-
-
 def _dot_func(f):
     dot_func = '{} [label="{}", color=lightblue, style=filled, shape=box]\n'
     txt = dot_func.format(id(f), f.__class__.__name__)
@@ -36,13 +23,6 @@ def _dot_func(f):
     for y in f.outputs:
         txt += dot_edge.format(id(f), id(y()))
     return txt
-
-
-x0 = Variable(np.array(1.0))
-x1 = Variable(np.array(1.0))
-y = x0 + x1
-txt = _dot_func(y.creator)
-print(txt)
 
 
 def get_dot_graph(output, verbose=True):
@@ -69,20 +49,12 @@ def get_dot_graph(output, verbose=True):
     return 'digraph g {\n' + txt + '}'
 
 
-x0 = Variable(np.array(1.0))
-x1 = Variable(np.array(1.0))
-y = x0 + x1
-x0.name = 'x0'
-x1.name = 'x1'
-y.name = 'y'
-txt = get_dot_graph(y)
-print(txt)
-
-
 def plot_dot_graph(output, verbose=True, to_file='graph.png'):
     dot_graph = get_dot_graph(output, verbose)
 
-    tmp_dir = '.'
+    tmp_dir = '.dezero'
+    if not os.path.exists(tmp_dir):
+        os.mkdir(tmp_dir)
     graph_path = os.path.join(tmp_dir, 'graph.dot')
 
     with open(graph_path, 'w') as f:
