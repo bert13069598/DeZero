@@ -172,6 +172,17 @@ class Pow(Function):
         return gx
 
 
+class Sin(Function):
+    def forward(self, x):
+        y = np.sin(x)
+        return y
+
+    def backward(self, gy):
+        x = self.inputs[0].data
+        gx = gy * np.cos(x)
+        return gx
+
+
 @contextlib.contextmanager
 def using_config(name, value):
     old_value = getattr(Config, name)
@@ -222,6 +233,10 @@ def rdiv(x0, x1):
 
 def pow(x, c):
     return Pow(c)(x)
+
+
+def sin(x):
+    return Sin()(x)
 
 
 def setup_variable():
