@@ -191,6 +191,7 @@ def add(x0, x1):
 
 
 def mul(x0, x1):
+    x1 = np.array(x1) if np.isscalar(x1) else x1
     return Mul()(x0, x1)
 
 
