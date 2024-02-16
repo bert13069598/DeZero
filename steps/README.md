@@ -42,3 +42,12 @@ rosenbrock의 미분
 y = 100(x1 - x0^2)^2 + (1 - x0)^2
 ```
 경사하강법 구현
+
+### step 29
+```bash
+python step29.py
+```
+```math
+y = x^4 - 2x^2
+```
+
