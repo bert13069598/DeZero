@@ -17,14 +17,11 @@ def gx2(x):
 
 
 x = Variable(np.array(2.0))
-iters = 10
+y = f(x)
+y.backward(create_graph=True)
+print(x.grad)
 
-for i in range(iters):
-    print(i, x)
-
-    y = f(x)
-    x.cleargrad()
-    y.backward()
-
-    x.data -= x.grad / gx2(x.data)
-
+gx = x.grad
+x.cleargrad()
+gx.backward()
+print(x.grad)
