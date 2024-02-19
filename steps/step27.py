@@ -6,11 +6,12 @@ if '__file__' in globals():
     import os, sys
 
     sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from dezero import Variable, sin
+from dezero import Variable
+import dezero.functions as F
 from dezero.utils import plot_dot_graph
 
 x = Variable(np.array(np.pi / 4))
-y = sin(x)
+y = F.sin(x)
 y.backward()
 
 print(y.data)
