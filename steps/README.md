@@ -59,3 +59,12 @@ y = x^4 - 2x^2
 ```bash
 python step34.py
 ```
+
+### step 35
+```bash
+python step35.py
+```
+tanh 클래스
+```math
+y = tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
+```
