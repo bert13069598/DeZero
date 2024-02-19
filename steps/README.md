@@ -83,3 +83,8 @@ z = (\frac{\partial}{\partial x}y)^3 + y
 ```math
 \frac{\partial}{\partial x}z = 24x^2 + 2x
 ```
+
+### step 37
+```bash
+python step37.py
+```
