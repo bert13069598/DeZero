@@ -68,3 +68,18 @@ tanh 클래스
 ```math
 y = tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
 ```
+
+### step 36
+```bash
+python step36.py
+```
+double backprop
+```math
+y = x^2
+```
+```math
+z = (\frac{\partial}{\partial x}y)^3 + y
+```
+```math
+\frac{\partial}{\partial x}z = 24x^2 + 2x
+```
