@@ -1,6 +1,6 @@
 import numpy as np
 
-from dezero.core import Variable, Function, Reshape, Transpose
+from dezero.core import Variable, Function, Reshape, Transpose, Sum
 
 
 class Sin(Function):
@@ -56,3 +56,7 @@ def reshape(x, shape):
 
 def transpose(x):
     return Transpose()(x)
+
+
+def sum(x, axis=None, keepdims=False):
+    return Sum(axis, keepdims)(x)

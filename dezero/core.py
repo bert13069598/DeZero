@@ -68,6 +68,9 @@ class Variable:
     def transpose(self):
         return transpose(self)
 
+    def sum(self, axis=None, keepdims=False):
+        return sum(self, axis, keepdims)
+
     @property
     def shape(self):
         return self.data.shape
@@ -209,6 +212,22 @@ class Transpose(Function):
         return gx
 
 
+class Sum(Function):
+    def __init__(self, axis, keepdims):
+        self.axis = axis
+        self.keepdims = keepdims
+
+    def forward(self, x):
+        self.x_shape = x.shape
+        y = x.sum(axis=self.axis, keepdims=self.keepdims)
+        return y
+
+    def backward(self, gy):
+        gy = utils.reshape_sum_backward(gy, self.x_shape, self.axis, self.keepdims)
+        gx = broadcast_to(gy, self.x_shape)
+        return gx
+
+
 @contextlib.contextmanager
 def using_config(name, value):
     old_value = getattr(Config, name)
@@ -269,6 +288,10 @@ def reshape(x, shape):
 
 def transpose(x):
     return Transpose()(x)
+
+
+def sum(x, axis=None, keepdims=False):
+    return Sum(axis, keepdims)(x)
 
 
 def setup_variable():
