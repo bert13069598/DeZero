@@ -1,6 +1,6 @@
 import numpy as np
 
-from dezero.core import Function
+from dezero.core import Variable, Function, Reshape
 
 
 class Sin(Function):
@@ -46,3 +46,9 @@ def cos(x):
 
 def tanh(x):
     return Tanh()(x)
+
+
+def reshape(x, shape):
+    if x.shape == shape:
+        return x if isinstance(x, Variable) else Variable(x)
+    return Reshape(shape)(x)

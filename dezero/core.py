@@ -60,6 +60,11 @@ class Variable:
     def cleargrad(self):
         self.grad = None
 
+    def reshape(self, *shape):
+        if len(shape) == 1 and isinstance(shape[0], (tuple, list)):
+            shape = shape[0]
+        return reshape(self, shape)
+
     @property
     def shape(self):
         return self.data.shape
@@ -174,6 +179,19 @@ class Pow(Function):
         return gx
 
 
+class Reshape(Function):
+    def __init__(self, shape):
+        self.shape = shape
+
+    def forward(self, x):
+        self.x_shape = x.shape
+        y = x.reshape(self.shape)
+        return y
+
+    def backward(self, gy):
+        return reshape(gy, self.x_shape)
+
+
 @contextlib.contextmanager
 def using_config(name, value):
     old_value = getattr(Config, name)
@@ -224,6 +242,12 @@ def rdiv(x0, x1):
 
 def pow(x, c):
     return Pow(c)(x)
+
+
+def reshape(x, shape):
+    if x.shape == shape:
+        return x if isinstance(x, Variable) else Variable(x)
+    return Reshape(shape)(x)
 
 
 def setup_variable():
