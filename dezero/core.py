@@ -65,6 +65,9 @@ class Variable:
             shape = shape[0]
         return reshape(self, shape)
 
+    def transpose(self):
+        return transpose(self)
+
     @property
     def shape(self):
         return self.data.shape
@@ -80,6 +83,10 @@ class Variable:
     @property
     def dtype(self):
         return self.data.dtype
+
+    @property
+    def T(self):
+        return transpose(self)
 
     def __len__(self):
         return len(self.data)
@@ -192,6 +199,16 @@ class Reshape(Function):
         return reshape(gy, self.x_shape)
 
 
+class Transpose(Function):
+    def forward(self, x):
+        y = np.transpose(x)
+        return y
+
+    def backward(self, gy):
+        gx = transpose(gy)
+        return gx
+
+
 @contextlib.contextmanager
 def using_config(name, value):
     old_value = getattr(Config, name)
@@ -248,6 +265,10 @@ def reshape(x, shape):
     if x.shape == shape:
         return x if isinstance(x, Variable) else Variable(x)
     return Reshape(shape)(x)
+
+
+def transpose(x):
+    return Transpose()(x)
 
 
 def setup_variable():
