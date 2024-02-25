@@ -119,3 +119,14 @@ div
 ```math
 gx1 = \sum -gy \frac{x0}{x1^2}
 ```
+
+### step 41
+```bash
+python step41.py
+```
+```math
+\frac{\partial L}{\partial x} = \sum \frac{\partial L}{\partial y} \frac{\partial y}{\partial x} = \sum \frac{\partial L}{\partial y} W^T
+```
+```math
+\frac{\partial L}{\partial W} = x^T \frac{\partial L}{\partial y}
+```

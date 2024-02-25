@@ -278,6 +278,18 @@ class SumTo(Function):
         return gx
 
 
+class MatMul(Function):
+    def forward(self, x, W):
+        y = x.dot(W)
+        return y
+
+    def backward(self, gy):
+        x, W = self.inputs
+        gx = matmul(gy, W.T)
+        gy = matmul(x.T, gy)
+        return gx, gy
+
+
 @contextlib.contextmanager
 def using_config(name, value):
     old_value = getattr(Config, name)
@@ -354,6 +366,10 @@ def sum_to(x, shape):
     if x.shape == shape:
         return x if isinstance(x, Variable) else Variable(x)
     return SumTo(shape)(x)
+
+
+def matmul(x, W):
+    return MatMul()(x, W)
 
 
 def setup_variable():

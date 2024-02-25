@@ -1,6 +1,6 @@
 import numpy as np
 
-from dezero.core import Variable, Function, Reshape, Transpose, Sum
+from dezero.core import Variable, Function, Reshape, Transpose, Sum, MatMul
 
 
 class Sin(Function):
@@ -60,3 +60,7 @@ def transpose(x):
 
 def sum(x, axis=None, keepdims=False):
     return Sum(axis, keepdims)(x)
+
+
+def matmul(x, W):
+    return MatMul()(x, W)
