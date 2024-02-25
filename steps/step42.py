@@ -10,8 +10,6 @@ from dezero import functions as F
 np.random.seed(0)
 x = np.random.rand(100, 1)
 y = 5 + 2 * x + np.random.rand(100, 1)
-x = Variable(x)
-y = Variable(y)
 
 W = Variable(np.zeros((1, 1)))
 b = Variable(np.zeros(1))
@@ -22,16 +20,11 @@ def predict(x):
     return y
 
 
-def mean_square_error(x0, x1):
-    diff = x0 - x1
-    return F.sum(diff ** 2) / len(diff)
-
-
 lr = 0.1
 iters = 100
 for i in range(iters):
     y_pred = predict(x)
-    loss = mean_square_error(y, y_pred)
+    loss = F.mean_square_error(y, y_pred)
 
     W.cleargrad()
     b.cleargrad()

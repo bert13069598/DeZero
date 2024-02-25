@@ -36,6 +36,20 @@ class Tanh(Function):
         return gx
 
 
+class MeanSquareError(Function):
+    def forward(self, x0, x1):
+        diff = x0 - x1
+        y = (diff ** 2).sum() / len(diff)
+        return y
+
+    def backward(self, gy):
+        x1, x0 = self.inputs
+        diff = x0 - x1
+        gx0 = gy * diff * (2. / len(diff))
+        gx1 = -gx0
+        return gx0, gx1
+
+
 def sin(x):
     return Sin()(x)
 
@@ -64,3 +78,7 @@ def sum(x, axis=None, keepdims=False):
 
 def matmul(x, W):
     return MatMul()(x, W)
+
+
+def mean_square_error(x0, x1):
+    return MeanSquareError()(x0, x1)
