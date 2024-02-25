@@ -98,3 +98,24 @@ python step38.py
 ```bash
 python step39.py
 ```
+
+### step 40
+```bash
+python step40.py
+```
+sum
+```math
+gx1 = \sum gy
+```
+sub
+```math
+gx1 = \sum gy
+```
+mul
+```math
+gx1 = \sum gy\bullet x0
+```
+div
+```math
+gx1 = \sum -gy \frac{x0}{x1^2}
+```
