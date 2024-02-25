@@ -111,7 +111,7 @@ class Function:
         ys = self.forward(*xs)
         if not isinstance(ys, tuple):
             ys = (ys,)
-        outputs = [Variable(np.array(y)) if np.isscalar(y) else Variable(y) for y in ys]
+        outputs = [Variable((np.array(y)) if np.isscalar(y) else y) for y in ys]
 
         if Config.enable_backprop:
             self.generation = max([x.generation for x in inputs])

@@ -130,3 +130,8 @@ python step41.py
 ```math
 \frac{\partial L}{\partial W} = x^T \frac{\partial L}{\partial y}
 ```
+
+### step 42
+```bash
+python step42.py
+```
