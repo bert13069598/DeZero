@@ -19,9 +19,9 @@ b2 = Variable(np.zeros(O))
 
 
 def predict(x):
-    y = F.linear_simple(x, W1, b1)
-    y = F.sigmoid_simple(y)
-    y = F.linear_simple(y, W2, b2)
+    y = F.linear(x, W1, b1)
+    y = F.sigmoid(y)
+    y = F.linear(y, W2, b2)
     return y
 
 

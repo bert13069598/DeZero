@@ -1,5 +1,6 @@
 import numpy as np
 
+import dezero
 from dezero.core import Variable, Function, Reshape, Transpose, Sum, MatMul
 
 
@@ -50,6 +51,43 @@ class MeanSquareError(Function):
         return gx0, gx1
 
 
+class Exp(Function):
+    def forward(self, x):
+        y = np.exp(x)
+        return y
+
+    def backward(self, gy):
+        y = self.outputs[0]()  # weakref
+        gx = gy * y
+        return gx
+
+
+class Linear(Function):
+    def forward(self, x, W, b):
+        y = x.dot(W)
+        if b is not None:
+            y += b
+        return y
+
+    def backward(self, gy):
+        x, W, b = self.inputs
+        gb = None if b.data is None else dezero.core.sum_to(gy, b.shape)
+        gx = matmul(gy, W.T)
+        gW = matmul(x.T, gy)
+        return gx, gW, gb
+
+
+class Sigmoid(Function):
+    def forward(self, x):
+        y = 1 / (1 + np.exp(-x))
+        return y
+
+    def backward(self, gy):
+        y = self.outputs[0]()
+        gx = gy * y * (1 - y)
+        return gx
+
+
 def sin(x):
     return Sin()(x)
 
@@ -98,7 +136,15 @@ def linear_simple(x, W, b=None):
     return y
 
 
+def linear(x, W, b=None):
+    return Linear()(x, W, b)
+
+
 def sigmoid_simple(x):
     x = x if isinstance(x, Variable) else Variable(x)
     y = 1 / (1 + exp(-x))
     return y
+
+
+def sigmoid(x):
+    return Sigmoid()(x)
