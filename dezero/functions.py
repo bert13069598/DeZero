@@ -82,3 +82,23 @@ def matmul(x, W):
 
 def mean_square_error(x0, x1):
     return MeanSquareError()(x0, x1)
+
+
+def exp(x):
+    return Exp()(x)
+
+
+def linear_simple(x, W, b=None):
+    t = matmul(x, W)
+    if b is None:
+        return t
+
+    y = t + b
+    t.data = None  # Release t.data (ndarray) for memory efficiency
+    return y
+
+
+def sigmoid_simple(x):
+    x = x if isinstance(x, Variable) else Variable(x)
+    y = 1 / (1 + exp(-x))
+    return y
